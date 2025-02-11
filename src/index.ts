@@ -62,4 +62,5 @@ process.once('SIGTERM', () => {
 
 connectDB()
   .then(() => bot.launch())
+  .then(() => console.log('Bot started'))
   .catch((err) => console.log(err));

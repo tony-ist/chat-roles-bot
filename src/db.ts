@@ -11,14 +11,16 @@ import {
 
 const { MongoClient } = require('mongodb');
 
-const url: string = `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/`;
+const url: string = process.env.MONGO_CONNECTION_STRING;
 let client: typeof MongoClient;
 let db: Db;
 
 const connectDB = async (): Promise<void> => {
   try {
+    console.log('Connecting to DB...');
     client = await MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
     db = client.db(process.env.MONGO_DB_NAME);
+    console.log('Connected to DB successfully');
   } catch (err) {
     throw new Error(`DB connection error: ${err}`);
   }
