@@ -31,6 +31,12 @@ bot.command('delete', deletee);
 bot.on('text', onRoleMention);
 bot.on('my_chat_member', onAdded);
 
+bot.action(/^[ping]+(-[a-z]+)?$/, async (ctx) => {
+  ctx.answerCbQuery();
+  ctx.state.roleChosen = ctx.match[1].split('-')[1];
+  return ping(ctx);
+});
+
 bot.action(/^[join]+(-[a-z]+)?$/, async (ctx) => {
   ctx.answerCbQuery();
   ctx.state.roleChosen = ctx.match[1].split('-')[1];

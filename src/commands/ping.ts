@@ -1,15 +1,36 @@
-import { Context } from 'telegraf';
+import { Context, Markup } from 'telegraf';
 import { Message } from 'typegram';
 
-import { getUserIdsAndUsernamesFromRole } from '../db';
+import { getChatRoles, getUserIdsAndUsernamesFromRole } from '../db';
 import { getRoleReplyCodes } from '../reply_codes';
 
+function escapeUnderscores(str: string): string {
+  return str.replace(/_/g, '\\_');
+}
+
 const ping = async (ctx: Context): Promise<void> => {
-  const user: string = ctx.from.username;
   const chatId: number = ctx.chat.id;
-  const args: string[] = (ctx.message as Message.TextMessage).text.split(' ');
-  const role: string = args[1];
-  const message: string = args.slice(2).join(' ');
+  let role: string;
+
+  if (ctx.state.roleChosen) {
+    role = ctx.state.roleChosen;
+    await ctx.deleteMessage();
+  } else {
+    const args: string[] = (ctx.message as Message.TextMessage).text.split(' ');
+    role = args[1];
+  }
+
+  if (!role) {
+    const buttons = [];
+    const roles = await getChatRoles(chatId);
+
+    for (const roleToPing of roles) {
+      buttons.push([Markup.button.callback(roleToPing, `ping-${roleToPing}`)]);
+    }
+
+    await ctx.reply('Choose a role to ping', Markup.inlineKeyboard(buttons));
+    return;
+  }
 
   await getUserIdsAndUsernamesFromRole(role, chatId)
     .then(async (res: string | Object) => {
@@ -20,15 +41,18 @@ const ping = async (ctx: Context): Promise<void> => {
       }
 
       if (typeof res === 'object') {
-        let pings: string = '';
+        const pings: string[] = [];
         for (const id in res) {
-          pings += `[@${res[id]}](tg://user?id=${id}) `;
+          pings.push(`@${res[id]}`);
         }
-        const reply: string = `${user}:\n${message}\n${pings}`;
-        await ctx.reply(reply, { parse_mode: 'Markdown' });
+        // TODO: Split into chunks by 5 pings
+        const reply = `${role}: ${pings.join(' ')}`;
+        await ctx.reply(escapeUnderscores(reply), { parse_mode: 'Markdown' });
       }
     })
-    .catch((err) => { throw new Error(err); });
+    .catch((err) => {
+      throw new Error(err);
+    });
 };
 
 export default ping;
