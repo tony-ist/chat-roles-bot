@@ -31,25 +31,25 @@ bot.command('delete', deletee);
 bot.on('text', onRoleMention);
 bot.on('my_chat_member', onAdded);
 
-bot.action(/^[ping]+(-[a-z]+)?$/, async (ctx) => {
+bot.action(/^[ping]+(-[a-zA-Z0-9]+)?$/, async (ctx) => {
   ctx.answerCbQuery();
   ctx.state.roleChosen = ctx.match[1].split('-')[1];
   return ping(ctx);
 });
 
-bot.action(/^[join]+(-[a-z]+)?$/, async (ctx) => {
+bot.action(/^[join]+(-[a-zA-Z0-9]+)?$/, async (ctx) => {
   ctx.answerCbQuery();
   ctx.state.roleChosen = ctx.match[1].split('-')[1];
   return join(ctx);
 });
 
-bot.action(/^[leav]+(-[a-z]+)?$/, async (ctx) => {
+bot.action(/^[leav]+(-[a-zA-Z0-9]+)?$/, async (ctx) => {
   ctx.answerCbQuery();
   ctx.state.roleChosen = ctx.match[1].split('-')[1];
   return leave(ctx);
 });
 
-bot.action(/^[delt]+(-[a-z]+)?$/, async (ctx) => {
+bot.action(/^[delt]+(-[a-zA-Z0-9]+)?$/, async (ctx) => {
   ctx.answerCbQuery();
   ctx.state.roleChosen = ctx.match[1].split('-')[1];
   return deletee(ctx);
