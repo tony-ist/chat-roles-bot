@@ -53,3 +53,9 @@ Delete `sample_role`.  **Is only accessible by chat admins**.
 ---
 #### Any bugreports and ideas about improving functionality are highly welcome
 #### Have fun!
+
+---
+
+### TODO
+
+- Remove everyone role

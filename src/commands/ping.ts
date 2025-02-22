@@ -8,6 +8,14 @@ function escapeUnderscores(str: string): string {
   return str.replace(/_/g, '\\_');
 }
 
+function splitInChunks(strings: string[], chunkSize: number): string[][] {
+  const chunks = [];
+  for (let i = 0; i < strings.length; i += chunkSize) {
+    chunks.push(strings.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
+
 const ping = async (ctx: Context): Promise<void> => {
   const chatId: number = ctx.chat.id;
   let role: string;
@@ -41,13 +49,13 @@ const ping = async (ctx: Context): Promise<void> => {
       }
 
       if (typeof res === 'object') {
-        const pings: string[] = [];
-        for (const id in res) {
-          pings.push(`@${res[id]}`);
+        // Telegram does not ping people if there are more than 5 mentions in a message
+        const chunks = splitInChunks(Object.keys(res), 5);
+
+        for (const ids of chunks) {
+          const reply = `${role}: ${ids.map((id) => `@${res[id]}`).join(' ')}`;
+          await ctx.reply(escapeUnderscores(reply), { parse_mode: 'Markdown' });
         }
-        // TODO: Split into chunks by 5 pings
-        const reply = `${role}: ${pings.join(' ')}`;
-        await ctx.reply(escapeUnderscores(reply), { parse_mode: 'Markdown' });
       }
     })
     .catch((err) => {
