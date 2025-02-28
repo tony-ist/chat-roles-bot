@@ -159,14 +159,6 @@ const getChatRoles = async (chatId: number, userId?: number, doesUserHaveIt?: bo
   return roles;
 };
 
-const addEveryoneRole = async (chatId: number): Promise<void> => {
-  const collection: Collection = db.collection(String(chatId));
-  const cursor: Cursor = await collection.find({ role: 'everyone' });
-  if ((await cursor.count()) === 0) {
-    await collection.insertOne({ role: 'everyone', ids: [] });
-  }
-};
-
 export {
   saveOrUpdateUser,
   addUserIdToRole,
@@ -175,7 +167,6 @@ export {
   closeConnection,
   getUserIdsAndUsernamesFromRole,
   getChatRoles,
-  addEveryoneRole,
   deleteRole,
   getUserIdsFromRole,
 };

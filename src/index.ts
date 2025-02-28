@@ -11,7 +11,6 @@ import leave from './commands/leave';
 import myroles from './commands/myroles';
 import roles from './commands/roles';
 import onRoleMention from './onRoleMention';
-import onAdded from './onAdded';
 import list from './commands/list';
 import deletee from './commands/delete';
 
@@ -29,7 +28,6 @@ bot.command('roles', roles);
 bot.command('list', list);
 bot.command('delete', deletee);
 bot.on('text', onRoleMention);
-bot.on('my_chat_member', onAdded);
 
 bot.action(/^[ping]+(-[a-zA-Z0-9]+)?$/, async (ctx) => {
   ctx.answerCbQuery();
